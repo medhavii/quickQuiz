@@ -4,7 +4,7 @@
 }
 
 * {
-  box-sizing: border-box;
+  box-sizing: border-box; /* everything included inside of border, margin also included */
   font-family: Arial, Helvetica, sans-serif;
   margin: 0;
   padding: 0;
@@ -88,8 +88,10 @@ h3 {
 
 .btn:hover {
   cursor: pointer;
-  box-shadow: 0 0.4rem 1.4rem 0 rgba(86, 185, 235, 0.5);
-  transform: translateY(-0.1rem);
+  box-shadow: 0 0.4rem 1.4rem 0 rgba(86, 185, 235, 0.5); /*in rgba, a stands for alpha, which defines the opacity as a number btwin 0 and 1 */
+  transform: translateY(
+    -0.1rem
+  ); /* The translate value moves an element left/right and up/down */
   transition: transform 150ms;
 }
 .btn[disabled]:hover {
@@ -97,6 +99,8 @@ h3 {
   box-shadow: none;
   transform: none;
 }
+
+/* for taking username after the game, at the END page */
 
 form {
   display: flex;
@@ -112,8 +116,23 @@ input {
   font-size: 1.8rem;
   border: none;
   box-shadow: 0 0.1rem 1.4rem 0 rgba(86, 185, 235, 0.5);
+  /* offset-x | offset-y | blur-radius | spread-radius | color */
 }
 
 input::placeholder {
   color: #aaa;
 }
+
+/* Absolute Length Units
+
+cm,mm....
+px */
+
+/* Relative Length Units
+
+rem
+vh (viewport height)
+vw (viewport width)
+*/
+
+/* for more https://www.freecodecamp.org/news/learn-css-units-em-rem-vh-vw-with-code-examples */
