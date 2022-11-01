@@ -1,9 +1,10 @@
 const question = document.getElementById("question");
 const choice = Array.from(document.getElementsByClassName("choice-text"));
-const progressText=document.getElementById("progressText");
-const scoreText=document.getElementById("score");
-const progressBarFull=document.getElementById("progressBarFull");
-
+const progressText = document.getElementById("progressText");
+const scoreText = document.getElementById("score");
+const progressBarFull = document.getElementById("progressBarFull");
+let game = document.getElementById("game");
+let loader = document.getElementById("loader");
 
 let currentQuestion = {};
 let acceptingAnswers = false;
@@ -13,18 +14,38 @@ let availablequestions = [];
 
 let questions = [];
 
-fetch("questions.json").then(
-  res => {
+fetch(
+  "https://opentdb.com/api.php?amount=10&category=11&difficulty=easy&type=multiple"
+)
+  .then((res) => {
     return res.json();
-  }
-).then(loadedQuestions => {
-  questions = loadedQuestions;
-  startGame();
-})
+  })
+  .then((loadedQuestions) => {
+    questions = loadedQuestions.results.map((loadedQuestion) => {
+      const formattedQuestion = {
+        question: loadedQuestion.question,
+      };
 
-.catch(err =>{
-  console.error(err);
-})
+      const answerChoices = [...loadedQuestion.incorrect_answers];
+      formattedQuestion.answer = Math.floor(Math.random() * 4) + 1;
+      answerChoices.splice(
+        formattedQuestion.answer - 1,
+        0,
+        loadedQuestion.correct_answer
+      );
+
+      answerChoices.forEach((choice, index) => {
+        formattedQuestion["choice" + (index + 1)] = choice;
+      });
+
+      return formattedQuestion;
+    });
+
+    startGame();
+  })
+  .catch((err) => {
+    console.error(err);
+  });
 
 const correct_bonus = 10;
 const max_questions = 3;
@@ -35,19 +56,20 @@ startGame = () => {
   availablequestions = [...questions];
   console.log(availablequestions);
   getNewQuestion();
+  game.classList.remove("hidden");
+  loader.classList.add("hidden");
 };
 
 getNewQuestion = () => {
   if (availablequestions.length == 0 || questionCounter >= max_questions) {
-    localStorage.setItem('mostRecentScore',score);
-    
+    localStorage.setItem("mostRecentScore", score);
+
     return window.location.assign("/end.html");
   }
   questionCounter++;
   //progressText.innerText ="Question: " + questionCounter +"/"+ max_questions;
-  progressText.innerText =`Question: ${questionCounter} / ${max_questions}`;
+  progressText.innerText = `Question: ${questionCounter} / ${max_questions}`;
   progressBarFull.style.width = `${(questionCounter / max_questions) * 100}%`;
-
 
   const questionIndex = Math.floor(Math.random() * availablequestions.length);
   currentQuestion = availablequestions[questionIndex];
@@ -70,9 +92,9 @@ choice.forEach((choice) => {
     const selectedChoice = e.target;
     const selectedAnswer = selectedChoice.dataset["number"];
 
-    let classToApply = 'incorrect';
+    let classToApply = "incorrect";
     if (selectedAnswer == currentQuestion.answer) {
-      classToApply = 'correct';
+      classToApply = "correct";
       incrementScore(correct_bonus);
     }
     console.log(classToApply);
@@ -85,10 +107,7 @@ choice.forEach((choice) => {
   });
 });
 
-incrementScore = num =>{
-  score+=num;
+incrementScore = (num) => {
+  score += num;
   scoreText.innerText = score;
-}
-
-
- 
+};
